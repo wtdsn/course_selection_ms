@@ -1,0 +1,156 @@
+body,
+html {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  color: #555;
+}
+
+ul,
+ol {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+input,
+textarea {
+  outline: none;
+  border: none;
+  resize: none;
+}
+
+div,
+span,
+input,
+textarea,
+li {
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  vertical-align: middle;
+}
+
+
+@themeColor: #f76999;
+@tabbarHeight: 54px;
+
+// 竖直居中 ， 默认 flex-direaction :row
+.vertiCenter {
+  display: flex;
+  align-items: center;
+}
+
+// 水平居中
+.horiCenter {
+  display: flex;
+  justify-content: center;
+
+}
+
+.allCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  min-height: 100vh;
+  background-color: #f2f3f4;
+}
+
+.clearfix {
+  zoom: 1;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    clear: both;
+  }
+}
+
+.f_left {
+  float: left;
+}
+
+.f_right {
+  float: right;
+}
+
+.twoline {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.btn_active {
+  position: relative;
+  overflow: hidden;
+
+  &:active {
+    &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+
+      background-color: rgba(0, 0, 0, 0.08);
+
+      animation: activeShadow 0.1s linear forwards;
+    }
+  }
+}
+
+@keyframes activeShadow {
+  0% {
+    width: 40%;
+
+    border-radius: 0%;
+  }
+
+  80% {
+    border-radius: 20px;
+    width: 130%;
+  }
+
+  100% {
+    border-radius: 0px;
+    width: 150%;
+  }
+}
+
+.btn_active_scale {
+  &:active {
+    animation: activeScale 0.1s linear forwards;
+  }
+}
+
+@keyframes activeScale {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(0.92);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
