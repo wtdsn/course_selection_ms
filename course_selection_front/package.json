@@ -11,12 +11,16 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@iconify/vue": "^4.0.2",
     "element-plus": "^2.2.27",
     "pinia": "^2.0.28",
+    "unplugin-icons": "^0.14.15",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
+    "@iconify-json/ep": "^1.1.8",
+    "@iconify-json/mdi": "^1.1.39",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^18.11.12",
     "@vitejs/plugin-vue": "^4.0.0",
