@@ -2,21 +2,31 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import Layout from '@/layout/index.vue'
 
-const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/login.vue')
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'notFound',
-      component: () => import('../views/not-found.vue')
+export const defaultRoutes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    redirect: '/login',
+    meta: {
+      hidden: true
     }
-  ]
-})
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/login.vue'),
+    meta: {
+      hidden: true
+    }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'notFound',
+    component: () => import('@/views/not-found.vue'),
+    meta: {
+      hidden: true
+    }
+  }
+]
 
 export const adminRouters: RouteRecordRaw[] = [
   {
@@ -27,12 +37,26 @@ export const adminRouters: RouteRecordRaw[] = [
       {
         path: 'add-stu',
         name: 'addStu',
-        component: () => import('@/views/admin-add-stu.vue')
-      },
+        component: () => import('@/views/admin-add-stu.vue'),
+        meta: {
+          icon: 'mdi:account-multiple-plus-outline',
+          title: '添加学生'
+        }
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
       {
         path: 'add-tea',
         name: 'addTea',
-        component: () => import('@/views/admin-add-tea.vue')
+        component: () => import('@/views/admin-add-tea.vue'),
+        meta: {
+          icon: 'mdi:account-plus',
+          title: '添加老师'
+        }
       }
     ]
   }
@@ -83,6 +107,13 @@ export const addRouters = function (routers: RouteRecordRaw[]) {
     router.addRoute(routers[key])
   }
 }
-addRouters(teaRouters)
+
+// icon 使用 iconify 的图标
+const router = createRouter({
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  routes: defaultRoutes
+})
+
+addRouters(adminRouters)
 
 export default router

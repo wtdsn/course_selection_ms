@@ -1,10 +1,31 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useUser } from '@/stores/user'
 
 const loginFormData = reactive({
   number: '',
   pw: ''
 })
+
+// 身份切换
+const auth = ref('admin')
+
+// 点击登录
+const userStore = useUser()
+const loading = ref(false)
+async function login() {
+  loading.value = true
+  const res: any = await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        auth: loginFormData.number
+      })
+    }, 1000)
+  })
+  console.log(res)
+  userStore.auth = res.auth as string
+  loading.value = false
+}
 </script>
 
 <template>
@@ -41,7 +62,11 @@ const loginFormData = reactive({
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" class="login_button"
+            <el-button
+              type="primary"
+              class="login_button"
+              :loading="loading"
+              @click="login"
               >登<span class="span"></span>录</el-button
             >
           </el-form-item>
@@ -49,9 +74,9 @@ const loginFormData = reactive({
       </div>
       <div class="line">点击按钮选择你的身份</div>
       <ul class="toggle_auth">
-        <li class="active">学生</li>
-        <li>教师</li>
-        <li>管理员</li>
+        <li :class="{ active: auth === 'student' }">学生</li>
+        <li :class="{ active: auth === 'teacher' }">教师</li>
+        <li :class="{ active: auth === 'admin' }">管理员</li>
       </ul>
     </div>
   </div>

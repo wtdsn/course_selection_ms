@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from 'node:url'
 import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -29,7 +28,8 @@ export default defineConfig({
         IconsResolver({
           prefix: 'Icon'
         })
-      ]
+      ],
+      dts: path.resolve(__dirname, './auto-imports.d.ts')
     }),
     // 自动注册
     Components({
@@ -39,7 +39,8 @@ export default defineConfig({
           // 图标集
           enabledCollections: ['ep', 'mdi']
         })
-      ]
+      ],
+      dts: path.resolve(__dirname, './components.d.ts')
     }),
     // 自动下载， 有些 icon 本地是没有的
     Icons({
@@ -48,7 +49,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': path.resolve(__dirname, 'src')
     }
   },
 
