@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useUser } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 const loginFormData = reactive({
   number: '',
@@ -13,6 +14,7 @@ const auth = ref('admin')
 // 点击登录
 const userStore = useUser()
 const loading = ref(false)
+const router = useRouter()
 async function login() {
   loading.value = true
   const res: any = await new Promise((resolve) => {
@@ -22,8 +24,11 @@ async function login() {
       })
     }, 1000)
   })
-  console.log(res)
   userStore.auth = res.auth as string
+  localStorage.setItem('isLogin', res.auth)
+  router.push({
+    path: '/'
+  })
   loading.value = false
 }
 </script>
@@ -35,26 +40,16 @@ async function login() {
       <div class="login_form">
         <el-form ref="loginForm" :model="loginFormData">
           <el-form-item label="" prop="number">
-            <el-input
-              class="form_input"
-              v-model.number="loginFormData.number"
-              type="text"
-              placeholder="请输入账号"
-              autocomplete="off"
-            >
+            <el-input class="form_input" v-model.number="loginFormData.number" type="text" placeholder="请输入账号"
+              autocomplete="off">
               <template #prefix>
                 <i-ep-UserFilled />
               </template>
             </el-input>
           </el-form-item>
           <el-form-item label="" prop="pw">
-            <el-input
-              class="form_input"
-              v-model="loginFormData.pw"
-              type="password"
-              placeholder="请输入密码"
-              autocomplete="off"
-            >
+            <el-input class="form_input" v-model="loginFormData.pw" type="password" placeholder="请输入密码"
+              autocomplete="off">
               <template #prefix>
                 <i-mdi-password />
               </template>
@@ -62,13 +57,8 @@ async function login() {
           </el-form-item>
 
           <el-form-item>
-            <el-button
-              type="primary"
-              class="login_button"
-              :loading="loading"
-              @click="login"
-              >登<span class="span"></span>录</el-button
-            >
+            <el-button type="primary" class="login_button" :loading="loading" @click="login">登<span
+                class="span"></span>录</el-button>
           </el-form-item>
         </el-form>
       </div>

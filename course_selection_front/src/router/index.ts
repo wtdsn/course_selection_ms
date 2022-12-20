@@ -4,13 +4,6 @@ import Layout from '@/layout/index.vue'
 
 export const defaultRoutes: RouteRecordRaw[] = [
   {
-    path: '/',
-    redirect: '/login',
-    meta: {
-      hidden: true
-    }
-  },
-  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/login.vue'),
@@ -30,9 +23,9 @@ export const defaultRoutes: RouteRecordRaw[] = [
 
 export const adminRouters: RouteRecordRaw[] = [
   {
-    path: '/admin',
+    path: '/',
     component: Layout,
-    redirect: '/admin/add-stu',
+    redirect: '/add-stu',
     children: [
       {
         path: 'add-stu',
@@ -46,7 +39,7 @@ export const adminRouters: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/admin',
+    path: '/',
     component: Layout,
     children: [
       {
@@ -64,15 +57,23 @@ export const adminRouters: RouteRecordRaw[] = [
 
 export const stuRouters: RouteRecordRaw[] = [
   {
-    path: '/stu',
+    path: '/',
+    name: 'stu',
     component: Layout,
-    redirect: '/stu/stu-info',
+    redirect: '/stu-info',
     children: [
       {
         path: 'stu-info',
         name: 'stuInfo',
         component: () => import('@/views/stu-info.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'stu',
+    component: Layout,
+    children: [
       {
         path: 'stu-select',
         name: 'stuSelect',
@@ -84,15 +85,23 @@ export const stuRouters: RouteRecordRaw[] = [
 
 export const teaRouters: RouteRecordRaw[] = [
   {
-    path: '/tea',
+    path: '/',
+    name: 'tea',
     component: Layout,
-    redirect: '/tea/tea-info',
+    redirect: '/tea-info',
     children: [
       {
         path: 'tea-info',
         name: 'teaInfo',
         component: () => import('@/views/tea-info.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'tea',
+    component: Layout,
+    children: [
       {
         path: 'tea-publish',
         name: 'teaPublish',
@@ -102,18 +111,23 @@ export const teaRouters: RouteRecordRaw[] = [
   }
 ]
 
-export const addRouters = function (routers: RouteRecordRaw[]) {
-  for (const key in routers) {
-    router.addRoute(routers[key])
+export const addRoutes = function (routers: RouteRecordRaw[]) {
+  return routers.map((v) => {
+    return router.addRoute(v)
+  })
+}
+
+export const resetRoutes = function (removers: any[]) {
+  for (const i in removers) {
+    removers[i]()
   }
 }
 
 // icon 使用 iconify 的图标
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: defaultRoutes
 })
-
-addRouters(adminRouters)
 
 export default router

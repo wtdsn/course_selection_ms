@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import {
-  addRouters,
+  addRoutes,
+  resetRoutes,
   defaultRoutes,
   adminRouters,
   stuRouters,
@@ -8,26 +9,33 @@ import {
 } from '@/router/index'
 import type { RouteRecordRaw } from 'vue-router'
 
-const userRouteStore = defineStore('route', {
+const useRouterStore = defineStore('route', {
   state: () => ({
-    routes: adminRouters,
-    addRoutes: []
+    routes: defaultRoutes,
+    asyncRoutes: [],
+    removers: []
   }),
   actions: {
-    addRouters(auth) {
-      let addRoutes: RouteRecordRaw[] = []
+    addRoutes(auth) {
+      let routes: RouteRecordRaw[] = []
       if (auth === 'admin') {
-        addRoutes = adminRouters
+        routes = adminRouters
       } else if (auth === 'teacher') {
-        addRoutes = teaRouters
+        routes = teaRouters
       } else {
-        addRoutes = stuRouters
+        routes = stuRouters
       }
-      addRouters(addRoutes)
-      this.addRoutes = addRoutes
-      this.routes = [...defaultRoutes, ...addRoutes]
+      addRoutes(routes)
+      this.asyncRoutes = routes
+      this.routes = [...defaultRoutes, ...routes]
+    },
+    resetRoutes() {
+      resetRoutes(this.removers)
+      this.removers.splice(0)
+      this.asyncRoutes = []
+      this.routes = defaultRoutes
     }
   }
 })
 
-export default userRouteStore
+export default useRouterStore

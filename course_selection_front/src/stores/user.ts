@@ -5,5 +5,17 @@ export const useUser = defineStore('user', {
     auth: '',
     name: '',
     number: ''
-  })
+  }),
+  actions: {
+    setInfo() {},
+    clearInof() {
+      this.auth = ''
+    },
+    async getInfo() {
+      this.auth = localStorage.getItem('isLogin')
+      return {
+        auth: this.auth
+      }
+    }
+  }
 })

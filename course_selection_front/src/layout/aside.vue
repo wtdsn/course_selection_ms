@@ -38,7 +38,7 @@ function generateRoutes(
       let item = route
 
       if (route.children.length === 1 && !route?.meta?.show) {
-        _prePath += route.path + '/'
+        _prePath += route.path
         item = route.children[0]
         if (item?.meta?.hidden) continue
       }
@@ -72,12 +72,7 @@ function generateRoutes(
 
 <template>
   <div class="aside_con" :class="isCollapse ? 'fold_menu' : 'open_menu'">
-    <el-menu
-      :default-active="route.path"
-      class="my_menu"
-      :collapse="isCollapse"
-      router
-    >
+    <el-menu :default-active="route.path" class="my_menu" :collapse="isCollapse" router>
       <MenuItem :menu-data="menuData" />
     </el-menu>
   </div>
