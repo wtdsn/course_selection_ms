@@ -10,6 +10,9 @@ const loginFormData = reactive({
 
 // 身份切换
 const auth = ref('admin')
+function toggleAuth(_auth: string) {
+  auth.value = _auth
+}
 
 // 点击登录
 const userStore = useUser()
@@ -40,16 +43,26 @@ async function login() {
       <div class="login_form">
         <el-form ref="loginForm" :model="loginFormData">
           <el-form-item label="" prop="number">
-            <el-input class="form_input" v-model.number="loginFormData.number" type="text" placeholder="请输入账号"
-              autocomplete="off">
+            <el-input
+              class="form_input"
+              v-model.number="loginFormData.number"
+              type="text"
+              placeholder="请输入账号"
+              autocomplete="off"
+            >
               <template #prefix>
                 <i-ep-UserFilled />
               </template>
             </el-input>
           </el-form-item>
           <el-form-item label="" prop="pw">
-            <el-input class="form_input" v-model="loginFormData.pw" type="password" placeholder="请输入密码"
-              autocomplete="off">
+            <el-input
+              class="form_input"
+              v-model="loginFormData.pw"
+              type="password"
+              placeholder="请输入密码"
+              autocomplete="off"
+            >
               <template #prefix>
                 <i-mdi-password />
               </template>
@@ -57,16 +70,34 @@ async function login() {
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" class="login_button" :loading="loading" @click="login">登<span
-                class="span"></span>录</el-button>
+            <el-button
+              type="primary"
+              class="login_button"
+              :loading="loading"
+              @click="login"
+            >
+              登<span class="span"></span>录
+            </el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="line">点击按钮选择你的身份</div>
       <ul class="toggle_auth">
-        <li :class="{ active: auth === 'student' }">学生</li>
-        <li :class="{ active: auth === 'teacher' }">教师</li>
-        <li :class="{ active: auth === 'admin' }">管理员</li>
+        <li
+          @click="toggleAuth('student')"
+          :class="{ active: auth === 'student' }"
+        >
+          学生
+        </li>
+        <li
+          @click="toggleAuth('teacher')"
+          :class="{ active: auth === 'teacher' }"
+        >
+          教师
+        </li>
+        <li @click="toggleAuth('admin')" :class="{ active: auth === 'admin' }">
+          管理员
+        </li>
       </ul>
     </div>
   </div>

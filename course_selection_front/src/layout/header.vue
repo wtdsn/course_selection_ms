@@ -1,11 +1,28 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useRouterStore from '@/stores/route'
+import { useUser } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import { Icon } from '@iconify/vue'
+
+const router = useRouter()
+function logout() {
+  const routerSore = useRouterStore()
+  const uerStore = useUser()
+
+  routerSore.resetRoutes()
+  uerStore.clearInof()
+  localStorage.removeItem('isLogin')
+  router.replace({ name: 'login' })
+}
+</script>
 
 <template>
   <div class="header_con">
     <div class="title">
-      <iMdiAccountStudent class="icon" />学生选课管理系统
+      <Icon icon="grommet-icons:system" class="icon" />
+      学生选课管理系统
     </div>
-    <div class="logout">登出</div>
+    <div class="logout" @click="logout">登出</div>
   </div>
 </template>
 
@@ -28,8 +45,8 @@
     .vertiCenter();
 
     .icon {
-      font-size: 26px;
-      padding-right: 6px;
+      font-size: 22px;
+      padding-right: 8px;
     }
   }
 

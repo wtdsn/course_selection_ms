@@ -68,11 +68,17 @@ function generateRoutes(
   }
   return res
 }
+
 </script>
 
 <template>
   <div class="aside_con" :class="isCollapse ? 'fold_menu' : 'open_menu'">
-    <el-menu :default-active="route.path" class="my_menu" :collapse="isCollapse" router>
+    <el-menu
+      :default-active="route.path"
+      class="my_menu"
+      :collapse="isCollapse"
+      router
+    >
       <MenuItem :menu-data="menuData" />
     </el-menu>
   </div>

@@ -25,7 +25,7 @@ const useRouterStore = defineStore('route', {
       } else {
         routes = stuRouters
       }
-      addRoutes(routes)
+      this.removers = addRoutes(routes)
       this.asyncRoutes = routes
       this.routes = [...defaultRoutes, ...routes]
     },
