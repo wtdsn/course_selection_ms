@@ -11,7 +11,7 @@ async function login(req, res) {
   }
 
   const result = await queryAsync(`SELECT * FROM ${auth.toLowerCase()}s 
-  WHERE number=${number} AND pw=${pw}`)
+  WHERE number='${number}' AND pw='${pw}'`)
 
   if (result.code === 0) {
     res.status(500).send({ message: "查询报错" })
@@ -21,6 +21,7 @@ async function login(req, res) {
     let data = { ...result.data[0] }
     delete data.pw
     req.session.userId = data.userId
+    req.session.auth = auth
     res.send({
       code: 1,
       msg: "登录成功",
@@ -38,6 +39,7 @@ async function login(req, res) {
 
 function logout(req, res) {
   req.session.userId = undefined
+  req.session.auth = undefined
   res.send({
     code: 1,
     msg: "登出成功"
