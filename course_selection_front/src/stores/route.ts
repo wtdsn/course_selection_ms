@@ -16,7 +16,7 @@ const useRouterStore = defineStore('route', {
     removers: []
   }),
   actions: {
-    addRoutes(auth) {
+    addRoutes(auth: string) {
       let routes: RouteRecordRaw[] = []
       if (auth === 'admin') {
         routes = adminRouters
@@ -25,8 +25,8 @@ const useRouterStore = defineStore('route', {
       } else {
         routes = stuRouters
       }
-      this.removers = addRoutes(routes)
-      this.asyncRoutes = routes
+      this.removers = addRoutes(routes) as any
+      this.asyncRoutes = routes as any
       this.routes = [...defaultRoutes, ...routes]
     },
     resetRoutes() {

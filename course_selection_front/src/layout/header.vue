@@ -2,10 +2,12 @@
 import useRouterStore from '@/stores/route'
 import { useUser } from '@/stores/user'
 import { useRouter } from 'vue-router'
-import { Icon } from '@iconify/vue'
+import { ElMessage } from 'element-plus'
 
+import { logOutApi } from '@/api/login'
 const router = useRouter()
 function logout() {
+  logOutApi()
   const routerSore = useRouterStore()
   const uerStore = useUser()
 
@@ -13,6 +15,7 @@ function logout() {
   uerStore.clearInof()
   localStorage.removeItem('isLogin')
   router.replace({ name: 'login' })
+  ElMessage.success('登出成功')
 }
 </script>
 

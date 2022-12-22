@@ -2,37 +2,53 @@
 import { ref, reactive } from 'vue'
 import { useUser } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+// api
+import { loginApi } from '@/api/login'
+
+// 身份切换
+const auth = ref('student')
+function toggleAuth(_auth: string) {
+  auth.value = _auth
+}
 
 const loginFormData = reactive({
   number: '',
   pw: ''
 })
 
-// 身份切换
-const auth = ref('admin')
-function toggleAuth(_auth: string) {
-  auth.value = _auth
-}
-
 // 点击登录
 const userStore = useUser()
 const loading = ref(false)
 const router = useRouter()
 async function login() {
+  if (!(loginFormData.number && loginFormData.pw)) {
+    ElMessage.warning('账号和密码不能为空')
+    return
+  }
+
   loading.value = true
-  const res: any = await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        auth: loginFormData.number
+  try {
+    const res = await loginApi({
+      ...loginFormData,
+      auth: auth.value
+    })
+
+    if (res.code === 1) {
+      ElMessage.success('登录成功')
+      userStore.setInfo(res.data)
+      userStore.auth = auth.value
+      localStorage.setItem('isLogin', 'true')
+
+      router.push({
+        path: '/'
       })
-    }, 1000)
-  })
-  userStore.auth = res.auth as string
-  localStorage.setItem('isLogin', res.auth)
-  router.push({
-    path: '/'
-  })
-  loading.value = false
+    }
+    loginFormData.pw = ''
+    loading.value = false
+  } catch (err) {
+    loading.value = false
+  }
 }
 </script>
 
@@ -59,6 +75,7 @@ async function login() {
             <el-input
               class="form_input"
               v-model="loginFormData.pw"
+              :show-password="true"
               type="password"
               placeholder="请输入密码"
               autocomplete="off"

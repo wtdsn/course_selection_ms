@@ -15,11 +15,13 @@ import IconsResolver from 'unplugin-icons/resolver'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      reactivityTransform: true
+    }),
     // 按需导入 el-ui
     AutoImport({
       // vue 函数自动导入
-      imports: ['vue'],
+      imports: ['vue', '@vueuse/core'],
       // 组件自动导入
       resolvers: [
         // ui 组件
@@ -29,7 +31,14 @@ export default defineConfig({
           prefix: 'Icon'
         })
       ],
-      dts: path.resolve(__dirname, './auto-imports.d.ts')
+      eslintrc: {
+        // 配置为 true ，生成 .eslintrc-auto-import.json 文件
+        // 并且在 eslint.js 中 include , 解决 ref is undefined 等问题
+        // 之后如果非更新，可以不开启
+        enabled: false
+      },
+      vueTemplate: true,
+      dts: path.resolve(__dirname, 'auto-imports.d.ts')
     }),
     // 自动注册
     Components({
@@ -40,7 +49,7 @@ export default defineConfig({
           enabledCollections: ['ep', 'mdi']
         })
       ],
-      dts: path.resolve(__dirname, './components.d.ts')
+      dts: path.resolve(__dirname, 'components.d.ts')
     }),
     // 自动下载， 有些 icon 本地是没有的
     Icons({
@@ -65,5 +74,18 @@ export default defineConfig({
         javascriptEnabled: true
       }
     }
+  },
+
+  // 服务器选修
+  server: {
+    // 配置代理
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000/cs/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    },
+    cors: true
   }
 })

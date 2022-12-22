@@ -6,20 +6,25 @@ export const useUser = defineStore('user', {
     name: 'Jack',
     number: '3120004787',
     userId: '',
-    otherInfo: {
-      gender: '男',
-      majorClass: '软件工程一班',
-      school: '计算机学院',
-      session: '20届'
-    }
+    otherInfo: {}
   }),
   actions: {
-    setInfo() {},
+    setInfo(data: any) {
+      const { name, number, userId, ...otherInfo } = data
+      this.name = name
+      this.number = number
+      this.userId = userId
+      this.otherInfo = otherInfo
+    },
     clearInof() {
       this.auth = ''
+      this.name = ''
+      this.number = ''
+      this.userId = 'userId'
+      if (this.otherInfo) this.otherInfo = {}
     },
     async getInfo() {
-      this.auth = localStorage.getItem('isLogin')
+      this.auth = '123'
       return {
         auth: this.auth
       }

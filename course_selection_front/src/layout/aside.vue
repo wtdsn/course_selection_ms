@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toRefs, defineProps, watchEffect, ref } from 'vue'
 import userRouteStore from '@/stores/route'
 import type { RouteRecordRaw } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -35,7 +34,7 @@ function generateRoutes(
     }
     // 如果有 childre
     if (route.children) {
-      let item = route
+      let item = route as RouteRecordRaw
 
       if (route.children.length === 1 && !route?.meta?.show) {
         _prePath += route.path
@@ -45,9 +44,9 @@ function generateRoutes(
 
       let r: menuItem = {
         path: _prePath + item.path,
-        title: item.meta.title as string
+        title: item?.meta?.title as string
       }
-      if (item.meta.icon) {
+      if (item?.meta?.icon) {
         r.icon = item.meta.icon as string
       }
       if (item.children) {
@@ -58,17 +57,16 @@ function generateRoutes(
       // 如果没有 children
       let r: menuItem = {
         path: _prePath + route.path,
-        title: route.meta.title as string
+        title: route!.meta!.title as string
       }
-      if (route.meta.icon) {
-        r.icon = route.meta.icon as string
+      if (route!.meta?.icon) {
+        r.icon = route!.meta?.icon as string
       }
       res.push(r)
     }
   }
   return res
 }
-
 </script>
 
 <template>
