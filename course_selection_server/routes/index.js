@@ -13,11 +13,11 @@ router.use('/', (req, res, next) => {
   if (!req.session.userId) {
     if (/^(\/logout)/i.test(req.url)) {
       return res.send({
-        code: 2,
-        messgae: '登出失败'
+        code: 3,
+        msg: '登出失败'
       })
     }
-    return res.status(403).send({ messgae: "未登录" })
+    return res.status(401).send({ messgae: "未登录" })
   } else
     next()
 })
