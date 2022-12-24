@@ -30,10 +30,6 @@ const stuConditions = [
   {
     type: 'session',
     lable: '届期'
-  },
-  {
-    type: 'school',
-    lable: '学院'
   }
 ]
 const condition = ref('')

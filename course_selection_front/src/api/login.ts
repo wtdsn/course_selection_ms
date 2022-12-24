@@ -1,5 +1,4 @@
 import { request } from '@/utils/request'
-/* import type { responseType } from '@/utils/request' */
 
 interface loginData {
   number: string | number
