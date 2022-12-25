@@ -3,7 +3,7 @@ import useRouterStore from '@/stores/route'
 import { useUser } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-
+import { Icon } from '@iconify/vue'
 import { logOutApi } from '@/api/login'
 const router = useRouter()
 function logout() {

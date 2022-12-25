@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CourseDetail from '@/components/CourseDetail.vue'
+import { ElMessage } from 'element-plus'
 
+// API 和 接口
 import { getCoursesApi } from '@/api/course'
 import type { courseInter, withTotal } from '@/api/course'
 import { getSelectionsApi } from '@/api/selection'
@@ -45,7 +47,7 @@ const coursesWithFlag = reactive<{
   courses: []
 })
 
-// 获取选课信息
+// 获取课程信息
 const loadingCourse = ref(false)
 async function getCourses() {
   loadingCourse.value = true
@@ -62,6 +64,25 @@ async function getCourses() {
     // 设置标志位
     handleFlag()
   }
+}
+
+// 刷新课程信息
+const refreshing = ref(false)
+async function refreshCourse() {
+  if (refreshing.value) {
+    return
+  }
+  refreshing.value = true
+  let w = Date.now()
+  await getCourses()
+  ElMessage.success('刷新成功')
+  w = Date.now() - w
+  if (w < 1000) {
+    w = 1000 - w
+  } else w = 0
+  setTimeout(() => {
+    refreshing.value = false
+  }, w)
 }
 
 // 设置选课标志
@@ -84,8 +105,6 @@ onMounted(() => {
 const isShowDetail = ref(false)
 const courseDetailData = ref<courseInter>()
 function detail(data: courseInter) {
-  console.log(data)
-
   isShowDetail.value = true
   courseDetailData.value = data
 }
@@ -143,7 +162,13 @@ async function cancelSelection() {
         :total="total"
       >
         <template #default>
-          <el-icon class="refresh"><iEpRefresh /></el-icon>
+          <el-icon
+            class="refresh"
+            @click="refreshCourse"
+            :class="{ refreshing: refreshing }"
+          >
+            <iEpRefreshRight />
+          </el-icon>
         </template>
       </el-pagination>
     </section>
@@ -159,8 +184,8 @@ async function cancelSelection() {
         <el-table-column prop="name" label="课程名称" min-width="100" />
         <el-table-column prop="teacherName" label="任教教师" min-width="90" />
         <el-table-column label="操作" min-width="160">
-          <template #default="{ $index, row }">
-            <el-button type="success" size="small" @click="detail($index, row)"
+          <template #default="{ row }">
+            <el-button type="success" size="small" @click="detail(row)"
               >详情</el-button
             >
             <el-popconfirm title="确定取消?" @confirm="cancelSelection">
@@ -211,6 +236,20 @@ async function cancelSelection() {
         border-radius: 2px;
         font-size: 22px;
         cursor: pointer;
+      }
+
+      .refreshing {
+        background-color: transparent;
+        animation: rotating 1s linear infinite;
+      }
+
+      @keyframes rotating {
+        0% {
+          transform: scale(1.1) rotate(0deg);
+        }
+        100% {
+          transform: scale(1.1) rotate(360deg);
+        }
       }
     }
   }

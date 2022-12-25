@@ -1,16 +1,19 @@
 import { defineStore } from 'pinia'
+import { getUserInfoApi } from '@/api/user'
+import type { userInfoInter } from '@/api/user'
 
 export const useUser = defineStore('user', {
   state: () => ({
     auth: '',
-    name: 'Jack',
-    number: '3120004787',
-    userId: '',
+    name: '',
+    number: '',
+    userId: 0,
     otherInfo: {}
   }),
   actions: {
-    setInfo(data: any) {
-      const { name, number, userId, ...otherInfo } = data
+    setInfo(data: userInfoInter) {
+      const { name, number, auth, userId, ...otherInfo } = data
+      this.auth = auth
       this.name = name
       this.number = number
       this.userId = userId
@@ -20,13 +23,14 @@ export const useUser = defineStore('user', {
       this.auth = ''
       this.name = ''
       this.number = ''
-      this.userId = 'userId'
+      this.userId = 0
       if (this.otherInfo) this.otherInfo = {}
     },
     async getInfo() {
-      this.auth = '123'
-      return {
-        auth: this.auth
+      const { code, data } = await getUserInfoApi()
+      if (code) {
+        this.setInfo(data!)
+        return data!.auth
       }
     }
   }

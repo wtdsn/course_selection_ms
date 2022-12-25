@@ -17,8 +17,17 @@ router.beforeEach(async (to, from) => {
     if (!userStore.auth) {
       // 没有权限，身份丢失，重新获取身份
       routerStore.resetRoutes()
-      userStore.getInfo()
+      const auth = await userStore.getInfo()
+      if (auth) {
+        routerStore.addRoutes(auth)
+        return { path: '/' }
+      } else {
+        localStorage.removeItem('isLogin')
+        return { name: 'login' }
+      }
     }
+
+    // 有权限时，如果没有路由
     if (!routerStore.asyncRoutes.length) {
       // 需要生成路由
       routerStore.addRoutes(userStore.auth)

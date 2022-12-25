@@ -22,7 +22,7 @@ const useRouterStore = defineStore('route', {
         routes = adminRouters
       } else if (auth === 'teacher') {
         routes = teaRouters
-      } else {
+      } else if (auth === 'student') {
         routes = stuRouters
       }
       this.removers = addRoutes(routes) as any

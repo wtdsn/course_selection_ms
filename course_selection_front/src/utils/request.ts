@@ -1,7 +1,11 @@
 import axios from 'axios'
 import type { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import baseURL from '@/api/baseURL'
+
+import { useUser } from '@/stores/user'
+import useRouterStore from '@/stores/route'
+import { useRouter } from 'vue-router'
 
 const instance = axios.create({
   baseURL,
@@ -46,11 +50,27 @@ instance.interceptors.response.use(
     if (err && err.response) {
       switch (err.response.status) {
         case 400:
-          console.log('请求出错')
+          console.log('400')
           break
         case 401:
-          console.log('登录超时')
-          // 删除本地缓存的 token
+          ;(() => {
+            const userStore = useUser()
+            const routerStore = useRouterStore()
+            const router = useRouter()
+            routerStore.resetRoutes()
+            ElMessageBox.confirm('登录超时，请重新登录', 'Warning', {
+              confirmButtonText: '确定',
+              type: 'warning',
+              center: true,
+              callback: () => {
+                userStore.clearInof()
+                router.replace({
+                  name: 'login'
+                })
+              }
+            })
+          })()
+
           break
         case 500:
           console.log('参数错误或服务器出错')
@@ -67,8 +87,13 @@ instance.interceptors.response.use(
 export async function request<T = unknown>(
   config: AxiosRequestConfig
 ): Promise<responseType<T>> {
-  const res = await instance(config)
-  return res.data
+  try {
+    const res = await instance(config)
+    return res.data
+  } catch (err) {
+    console.log(err)
+    return { code: 0, msg: '请求错误' }
+  }
 }
 
 export default instance
