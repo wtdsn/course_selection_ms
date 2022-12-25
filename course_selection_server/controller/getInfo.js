@@ -10,6 +10,7 @@ async function getUserInfo(req, res) {
     return res.status(401).send({ message: "登录超时" })
   }
 
+  data[0].auth = auth
   delete data[0].pw
 
   return res.send({

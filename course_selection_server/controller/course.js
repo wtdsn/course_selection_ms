@@ -19,7 +19,7 @@ async function getCourse(req, res) {
     let total = data[0]['COUNT(*)'], courses = []
     if (total) {
       const query = `SELECT
-      c.NAME,
+      c.name,
       c.courseId,
       c.credit,
       c.creditHours,
@@ -28,7 +28,7 @@ async function getCourse(req, res) {
       c.place,
       c.time,
       c.stuNum,
-      t.name as teacheName,
+      t.name as teacherName,
      count(s.id) as curNum
      FROM
       courses c,
@@ -59,7 +59,27 @@ async function getCourse(req, res) {
     })
   } else if (self) {
     // 查自己
-    const query = `SELECT * FROM courses WHERE teacherId=${userId}`
+    const query = `SELECT
+    c.name,
+    c.courseId,
+    c.credit,
+    c.creditHours,
+    c.introduce,
+    c.teacherId,
+    c.place,
+    c.time,
+    c.stuNum,
+    t.name as teacherName,
+   count(s.id) as curNum
+   FROM
+    courses c,
+    selections s,
+    teachers t
+   WHERE
+   c.teacherId = ${userId} AND
+    s.cId = c.courseId AND
+    c.teacherId = t.userId
+   group by courseId`
     let { code, data = [] } = await queryAsync(query)
 
     if (!code) {
