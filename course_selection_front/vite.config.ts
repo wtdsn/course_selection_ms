@@ -14,6 +14,8 @@ import IconsResolver from 'unplugin-icons/resolver'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // 配置打包后相对路径
+  base: './',
   plugins: [
     vue({
       reactivityTransform: true

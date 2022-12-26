@@ -45,13 +45,12 @@ app.use(bodyParser.json())
 app.use('/cs/api', router)
 
 // 重定向
-app.get('/cs-v', (req, res) => {
+app.get('/', (req, res) => {
   res.redirect(301, '/cs-v/index.html')
 })
 
 // 页面资源
 app.use('/cs-v', express.static('./public/views'))
-app.use('/cs-a', express.static('./public/assets'))
 
 app.listen(serverPort, () => {
   console.log(`${serverHost}:${serverPort}`)

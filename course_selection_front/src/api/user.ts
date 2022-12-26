@@ -8,6 +8,7 @@ export interface userInfoInter {
   userId: number
   [key: string]: any
 }
+
 export function getUserInfoApi() {
   return request<userInfoInter>({
     url: '/get-info',

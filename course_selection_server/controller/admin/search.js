@@ -4,7 +4,6 @@ const { checkValid } = require('../../utils/shared')
 async function search(req, res) {
   const { type, condition, matchText } = req.query
 
-  console.log(type, condition, matchText);
   // 非法验证
   if (type !== 'student' && type !== 'teacher') {
     return res.send({

@@ -39,28 +39,32 @@ function setMap() {
   })
 }
 
-// 获取课程信息
+/* 
+  获取课程信息
+*/
+// 变量初始化
 const total = ref(0)
 const size = 12
 const page = ref(1)
-
 const coursesWithFlag = reactive<{
   flags: boolean[]
   courses: courseInter[]
 }>({
-  flags: [],
-  courses: []
+  flags: [], // 是否已选标志
+  courses: [] // 课程列表
 })
 
 // 获取课程信息
 const loadingCourse = ref(false)
 async function getCourses() {
   loadingCourse.value = true
+  // 请求数据
   let { code, data } = await getCoursesApi({
     page: page.value,
     size
   })
   loadingCourse.value = false
+  // 如果成功，读取数据
   if (code) {
     total.value = (data as withTotal).total
     coursesWithFlag.courses = (data as withTotal).courses

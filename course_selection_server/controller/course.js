@@ -4,11 +4,13 @@ const { checkValid } = require('../utils/shared')
 // 查看课，老师可以查看自己的和全部的
 // 学生查看全部的
 async function getCourse(req, res) {
+  // 数据读取
   const { auth, userId } = req.session
   const { size, page, self } = req.query
 
+  // 查全部
   if (auth === 'student' || !self) {
-    // 查全部
+    // 查询总数量
     const { code, data } = await queryAsync(`SELECT COUNT(*) FROM courses`)
     if (!code) {
       return res.send({
@@ -18,29 +20,18 @@ async function getCourse(req, res) {
     }
     let total = data[0]['COUNT(*)'], courses = []
     if (total) {
-      const query = `SELECT
-      c.name,
-      c.courseId,
-      c.credit,
-      c.creditHours,
-      c.introduce,
-      c.teacherId,
-      c.place,
-      c.time,
-      c.stuNum,
-      t.name as teacherName,
-     count(s.id) as curNum
+      const query = `SELECT c.name,c.courseId,c.credit,c.creditHours,c.introduce,
+      c.teacherId,c.place,c.time,c.stuNum,t.name as teacherName,count(s.id) as curNum
      FROM
       courses c
      LEFT JOIN selections s
-     ON 
-     s.cId = c.courseId
+     ON  s.cId = c.courseId
      LEFT JOIN teachers t
-     ON
-      c.teacherId = t.userId
+     ON c.teacherId = t.userId
      group by courseId
-       LIMIT ${size * (page - 1)},${size}`
+     LIMIT ${size * (page - 1)},${size}`
 
+      // 查课程
       const { code, data } = await queryAsync(query)
       if (!code) {
         return res.send({
@@ -59,21 +50,10 @@ async function getCourse(req, res) {
       }
     })
   } else if (self) {
-    // 查自己
-    const query = `SELECT
-    c.name,
-    c.courseId,
-    c.credit,
-    c.creditHours,
-    c.introduce,
-    c.teacherId,
-    c.place,
-    c.time,
-    c.stuNum,
-    t.name as teacherName,
-   count(s.id) as curNum
-   FROM
-    courses c
+    // 查自己的课程
+    const query = `SELECT c.name, c.courseId,  c.credit, c.creditHours,c.introduce,c.teacherId,
+    c.place,c.time, c.stuNum,t.name as teacherName,count(s.id) as curNum
+   FROM courses c
    LEFT JOIN selections s
    ON s.cId = c.courseId
    LEFT JOIN  teachers t

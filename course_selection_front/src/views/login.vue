@@ -6,6 +6,8 @@ import { ElMessage } from 'element-plus'
 // api
 import { loginApi } from '@/api/login'
 
+import type { userInfoInter } from '@/api/user'
+
 // 身份切换
 const auth = ref('student')
 function toggleAuth(_auth: string) {
@@ -36,7 +38,7 @@ async function login() {
 
     if (res.code === 1) {
       ElMessage.success('登录成功')
-      userStore.setInfo(res.data)
+      userStore.setInfo(res.data as userInfoInter)
       userStore.auth = auth.value
       localStorage.setItem('isLogin', 'true')
 

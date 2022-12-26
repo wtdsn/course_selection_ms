@@ -1,0 +1,1 @@
+import{ao as o,W as e,o as _}from"./_plugin-vue_export-helper-1f852bcb.js";const n={},t={class:"not_found"};function c(s,a){return _(),e("div",t,"404 无此页面")}const r=o(n,[["render",c],["__scopeId","data-v-b93d3a80"]]);export{r as default};

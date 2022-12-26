@@ -5,11 +5,9 @@ interface loginData {
   pw: string | number
   auth: string
 }
-interface resultData {
-  name: string
-}
+
 export function loginApi(data: loginData) {
-  return request<resultData>({
+  return request({
     url: '/login',
     method: 'POST',
     data
