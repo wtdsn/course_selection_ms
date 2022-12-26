@@ -31,11 +31,12 @@ async function getCourse(req, res) {
       t.name as teacherName,
      count(s.id) as curNum
      FROM
-      courses c,
-      selections s,
-      teachers t
-     WHERE
-      s.cId = c.courseId AND
+      courses c
+     LEFT JOIN selections s
+     ON 
+     s.cId = c.courseId
+     LEFT JOIN teachers t
+     ON
       c.teacherId = t.userId
      group by courseId
        LIMIT ${size * (page - 1)},${size}`
@@ -72,13 +73,13 @@ async function getCourse(req, res) {
     t.name as teacherName,
    count(s.id) as curNum
    FROM
-    courses c,
-    selections s,
-    teachers t
+    courses c
+   LEFT JOIN selections s
+   ON s.cId = c.courseId
+   LEFT JOIN  teachers t
+   ON  c.teacherId = t.userId
    WHERE
-   c.teacherId = ${userId} AND
-    s.cId = c.courseId AND
-    c.teacherId = t.userId
+   c.teacherId = ${userId}
    group by courseId`
     let { code, data = [] } = await queryAsync(query)
 
@@ -194,12 +195,12 @@ async function updateCourse(req, res) {
   if (data.affectedRows) {
     res.send({
       code: 1,
-      msg: "更新成功"
+      msg: "修改成功"
     })
   } else {
     res.send({
       code: 2,
-      msg: "更新失败"
+      msg: "修改失败"
     })
   }
 }

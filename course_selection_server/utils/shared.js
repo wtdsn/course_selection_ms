@@ -1,5 +1,8 @@
 function checkValid(target) {
-  if (target !== 0 && (!target || !target.trim())) return false
+  if (typeof target === 'string') {
+    if (!target || !target.trim()) return false
+  }
+
   return true
 }
 

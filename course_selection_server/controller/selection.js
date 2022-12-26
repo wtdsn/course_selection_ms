@@ -88,13 +88,13 @@ async function delSelection(req, res) {
   if (!code || data.affectedRows === 0) {
     return res.send({
       code: 2,
-      msg: "删除失败"
+      msg: "取消失败"
     })
   }
 
   res.send({
     code: 1,
-    msg: "删除成功"
+    msg: "取消成功"
   })
 }
 
