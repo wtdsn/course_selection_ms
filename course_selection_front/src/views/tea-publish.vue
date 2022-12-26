@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { getCoursesApi } from '@/api/course'
-import type { courseInter, withTotal } from '@/api/course'
+import {
+  getCoursesApi,
+  addCourseApi,
+  delCourseApi,
+  modifyCourseApi
+} from '@/api/course'
+import type { courseInter, withTotal, addCourseInter } from '@/api/course'
 
 import CourseDetail from '@/components/CourseDetail.vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElLoading } from 'element-plus'
 
 // 全部
 const total = ref(0)
-const SIZE = 20
+const SIZE = 10
 const page = ref(1)
 const tatalCourses = ref<courseInter[]>([])
 const tatalCoursesLaoding = ref(false)
@@ -49,6 +54,11 @@ onMounted(() => {
   getAllCourse()
 })
 
+// 页码切换
+watch(page, () => {
+  getAllCourse()
+})
+
 // 我创建的课程
 const myCourses = ref<courseInter[]>()
 const myCoursesLoading = ref(false)
@@ -71,31 +81,102 @@ function tabClick(index: any) {
 
 // 详情显示
 const isShowDetail = ref(false)
+const dialogTitle = ref<'课程详情' | '课程修改' | '增加课程'>('课程详情')
 const courseDetailData = ref<courseInter>()
 function detail(data: courseInter) {
+  dialogTitle.value = '课程详情'
   courseDetailData.value = data
   isShowDetail.value = true
 }
+
+// 关闭 Dialog
 function closeDetail() {
   isShowDetail.value = false
 }
 
 // 修改课程
 const modify = ref<courseInter>()
-function modifyCourse() {
+function modifyCourse(data: courseInter) {
+  modify.value = data
+  dialogTitle.value = '课程修改'
   isShowDetail.value = true
+}
+
+async function confirmModify() {
+  if (modify.value) {
+    let { code, msg } = await modifyCourseApi(modify.value)
+    if (code) {
+      ElMessage.success(msg)
+
+      // 刷新我的课程
+      getMyCourses()
+      return true
+    }
+    return false
+  }
+  return false
 }
 
 // 增加课程
-const create = ref<courseInter>()
+const init: addCourseInter = {
+  name: '',
+  credit: '',
+  creditHours: '',
+  introduce: '',
+  place: '',
+  time: '',
+  stuNum: undefined
+}
+const create = ref<addCourseInter>({
+  ...init
+})
 function addCourse() {
+  dialogTitle.value = '增加课程'
   isShowDetail.value = true
 }
 
+async function confrimAdd() {
+  const { code, msg } = await addCourseApi(create.value)
+  if (code) {
+    ElMessage.success(msg)
+    // 刷新我的课程
+    getMyCourses()
+    // 重置 crate
+    create.value = { ...init }
+    return true
+  }
+  return false
+}
+
 // 确定修改 / 确定删除
-function dialogConfirm(type: any) {
-  isShowDetail.value = false
-  console.log(type)
+async function dialogConfirm(type: 'modify' | 'create') {
+  // loading
+  const loadingInstance = ElLoading.service({
+    target: '#courseDialog',
+    background: 'rgba(250,250,250,0.7)',
+    text: '处理中...'
+  })
+  let result: boolean
+  if (type === 'modify') {
+    result = await confirmModify()
+  } else {
+    result = await confrimAdd()
+  }
+  loadingInstance.close()
+
+  // 成功才关闭
+  if (result) {
+    closeDetail()
+  }
+}
+
+// 删除我的课程
+async function delCourse(courseId: number) {
+  const { code, msg } = await delCourseApi(courseId)
+  if (code) {
+    ElMessage.success(msg)
+    getMyCourses()
+  }
 }
 </script>
 
@@ -149,7 +230,7 @@ function dialogConfirm(type: any) {
       <el-tab-pane label="我发布的课程">
         <header class="header">
           <span>共：{{ myCourses?.length }}</span>
-          <el-button type="primary" @click="addCourse()">增加选课</el-button>
+          <el-button type="primary" @click="addCourse()">增加课程</el-button>
         </header>
         <el-table
           :data="myCourses"
@@ -168,25 +249,31 @@ function dialogConfirm(type: any) {
               <el-button type="success" size="small" @click="detail(row)"
                 >详情
               </el-button>
-              <el-button type="warning" size="small" @click="detail(row)"
+              <el-button type="warning" size="small" @click="modifyCourse(row)"
                 >修改
               </el-button>
-              <el-button type="danger" size="small" @click="detail(row)"
-                >删除
-              </el-button>
+              <el-popconfirm
+                title="确定删除?"
+                @confirm="delCourse(row.courseId)"
+              >
+                <template #reference>
+                  <el-button type="danger" size="small">删除 </el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
     <CourseDetail
+      id="courseDialog"
       :is-show="isShowDetail"
       @closeDetail="closeDetail"
       @confirm="dialogConfirm"
       :course="courseDetailData"
       :create="create"
       :modify="modify"
-      title="课程详情"
+      :title="dialogTitle"
     />
   </div>
 </template>

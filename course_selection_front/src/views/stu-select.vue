@@ -5,7 +5,12 @@ import { ElMessage } from 'element-plus'
 // API 和 接口
 import { getCoursesApi } from '@/api/course'
 import type { courseInter, withTotal } from '@/api/course'
-import { getSelectionsApi } from '@/api/selection'
+
+import {
+  getSelectionsApi,
+  addSelectionApi,
+  delSelectionApi
+} from '@/api/selection'
 import type { selectionInter } from '@/api/selection'
 
 // 获取我的选课，在获取课程前
@@ -36,7 +41,7 @@ function setMap() {
 
 // 获取课程信息
 const total = ref(0)
-const size = 20
+const size = 12
 const page = ref(1)
 
 const coursesWithFlag = reactive<{
@@ -66,6 +71,11 @@ async function getCourses() {
   }
 }
 
+// 换页
+watch(page, () => {
+  getCourses()
+})
+
 // 刷新课程信息
 const refreshing = ref(false)
 async function refreshCourse() {
@@ -87,7 +97,7 @@ async function refreshCourse() {
 
 // 设置选课标志
 function handleFlag() {
-  if (coursesWithFlag.courses.length && MySelections.value.length) {
+  if (coursesWithFlag.courses.length) {
     coursesWithFlag.courses.forEach((v, i) => {
       coursesWithFlag.flags[i] = selectionMap.value.has(v.courseId)
     })
@@ -114,9 +124,22 @@ function closeDetail() {
   isShowDetail.value = false
 }
 
+// 增加选课
+async function addSelection(courseId: number) {
+  const { code, msg } = await addSelectionApi(courseId)
+  if (code === 1) {
+    ElMessage.success(msg)
+    getSelections()
+  }
+}
+
 // 取消选课
-async function cancelSelection() {
-  console.log('Cancle')
+async function cancelSelection(id: number) {
+  const { code, msg } = await delSelectionApi(id)
+  if (code === 1) {
+    ElMessage.success(msg)
+    getSelections()
+  }
 }
 </script>
 
@@ -127,7 +150,6 @@ async function cancelSelection() {
         :data="coursesWithFlag.courses"
         border
         fit
-        height="100%"
         style="width: 100%"
         v-loading="loadingCourse"
       >
@@ -146,6 +168,7 @@ async function cancelSelection() {
               type="primary"
               size="small"
               :disabled="coursesWithFlag.flags[$index]"
+              @click="addSelection(row.courseId)"
               >{{ coursesWithFlag.flags[$index] ? '已选' : '选课' }}</el-button
             >
           </template>
@@ -188,7 +211,7 @@ async function cancelSelection() {
             <el-button type="success" size="small" @click="detail(row)"
               >详情</el-button
             >
-            <el-popconfirm title="确定取消?" @confirm="cancelSelection">
+            <el-popconfirm title="确定取消?" @confirm="cancelSelection(row.id)">
               <template #reference>
                 <el-button type="info" size="small">取消选课</el-button>
               </template>
@@ -215,8 +238,13 @@ async function cancelSelection() {
 
   .left_course {
     flex: 1;
+    height: 100%;
     max-width: 1000px;
     min-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     border-top: none;
     margin-right: 10px;

@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import toCH from '../ToCH'
-// 查询条件
-const type = ref('')
+import { ElMessage } from 'element-plus'
 
-function resetCondition() {
-  condition.value = ''
-}
+// API
+import { searchUserApi } from '@/api/user'
+import type { stuInfoInter, teaInfoInter } from '@/api/user'
+
+// 查询条件
+const type = ref<'student' | 'teacher' | ''>('')
+
 const teaConditions = [
+  {
+    type: 'all',
+    lable: '全部'
+  },
   {
     type: 'name',
     lable: '姓名'
@@ -19,6 +24,10 @@ const teaConditions = [
 ]
 
 const stuConditions = [
+  {
+    type: 'all',
+    lable: '全部'
+  },
   {
     type: 'name',
     lable: '姓名'
@@ -33,9 +42,47 @@ const stuConditions = [
   }
 ]
 const condition = ref('')
+function resetCondition() {
+  condition.value = ''
+  tableData.value = undefined
+}
 
-// 搜索
+onMounted(() => {
+  ElMessage.info('请选择查询对象和条件')
+})
+
+// 搜索文本
 const searchText = ref('')
+
+// 结果
+const tableData = ref<stuInfoInter[] | teaInfoInter[]>()
+
+const loading = ref(false)
+async function search() {
+  if (!type.value) {
+    ElMessage.warning('请选择查询类型')
+    return
+  }
+  if (!condition.value) {
+    ElMessage.warning('请选择查询条件')
+    return
+  }
+  if (condition.value !== 'all' && !searchText.value) {
+    ElMessage.warning('请输入搜索内容')
+    return
+  }
+  loading.value = true
+  const { code, msg, data } = await searchUserApi({
+    type: type.value,
+    condition: condition.value,
+    matchText: searchText.value
+  })
+  loading.value = false
+  if (code === 1) {
+    ElMessage.success(msg)
+    tableData.value = data
+  }
+}
 </script>
 
 <template>
@@ -72,7 +119,7 @@ const searchText = ref('')
         <div class="mt-4">
           <el-input v-model="searchText" placeholder="请输入搜索内容">
             <template #append>
-              <el-button type="primary" class="search_icon">
+              <el-button type="primary" class="search_icon" @click="search">
                 <el-icon><iEpSearch /></el-icon>
               </el-button>
             </template>
@@ -80,7 +127,35 @@ const searchText = ref('')
         </div>
       </section>
     </header>
-    <div class="result">table</div>
+    <div class="table_wrapper">
+      <template v-if="type === 'student'">
+        <el-table
+          v-loading="loading"
+          :data="tableData"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="name" label="姓名" min-width="160" />
+          <el-table-column prop="number" label="学号" min-width="180" />
+          <el-table-column prop="gender" label="性别" min-width="80" />
+          <el-table-column prop="majorClass" label="专业班级" min-width="180" />
+          <el-table-column prop="school" label="学院" min-width="180" />
+          <el-table-column prop="session" label="入学届期" min-width="120" />
+        </el-table>
+      </template>
+      <template v-else>
+        <el-table
+          v-loading="loading"
+          :data="tableData"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="name" label="姓名" min-width="160" />
+          <el-table-column prop="number" label="学号" min-width="180" />
+          <el-table-column prop="gender" label="性别" min-width="80" />
+        </el-table>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -122,11 +197,9 @@ const searchText = ref('')
     }
   }
 
-  .result {
+  .table_wrapper {
     margin-top: 10px;
-    background-color: pink;
-    max-height: 90%;
-    min-height: 300px;
+    border: 1px solid rgb(232, 232, 232);
   }
 }
 </style>

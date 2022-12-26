@@ -14,3 +14,48 @@ export function getUserInfoApi() {
     method: 'GET'
   })
 }
+
+// 查询
+interface searchInter {
+  type: 'student' | 'teacher'
+  condition: string
+  matchText?: string
+}
+export interface stuInfoInter {
+  name: string
+  number: string
+  gender: string
+  majorClass: string
+  school: string
+  session: string
+}
+
+export interface teaInfoInter {
+  name: string
+  number: string
+  gender: string
+}
+
+export function searchUserApi(params: searchInter) {
+  return request<stuInfoInter[] | teaInfoInter[]>({
+    url: '/admin/search',
+    method: 'GET',
+    params
+  })
+}
+
+export function addStuApi(data: stuInfoInter) {
+  return request({
+    url: '/admin/add-stu',
+    method: 'POST',
+    data
+  })
+}
+
+export function addTeaApi(data: teaInfoInter) {
+  return request({
+    url: '/admin/add-tea',
+    method: 'POST',
+    data
+  })
+}

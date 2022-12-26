@@ -1,5 +1,6 @@
 import { request } from '@/utils/request'
 
+/* 获取课程 */
 interface getCParams {
   self?: boolean
   size?: number
@@ -35,5 +36,40 @@ export function getCoursesApi(
     url: '/get-course',
     method: 'GET',
     params
+  })
+}
+
+/* 增加课程 */
+export interface addCourseInter {
+  name: string
+  credit: string
+  creditHours: string
+  introduce: string
+  place: string
+  time: string
+  stuNum: number | undefined
+}
+
+export function addCourseApi(data: addCourseInter) {
+  return request({
+    url: '/tea/add-course',
+    method: 'POST',
+    data
+  })
+}
+
+export function modifyCourseApi(data: courseInter) {
+  return request({
+    url: '/tea/update-course',
+    method: 'POST',
+    data
+  })
+}
+
+export function delCourseApi(courseId: number) {
+  return request({
+    url: '/tea/del-course',
+    method: 'POST',
+    data: { courseId }
   })
 }

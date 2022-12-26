@@ -20,3 +20,21 @@ export function getSelectionsApi() {
     method: 'GET'
   })
 }
+
+// 增加选课
+export function addSelectionApi(courseId: number) {
+  return request({
+    url: '/stu/add-selection',
+    method: 'POST',
+    data: { courseId }
+  })
+}
+
+// 取消选课
+export function delSelectionApi(id: number) {
+  return request({
+    url: '/stu/del-selection',
+    method: 'POST',
+    data: { id }
+  })
+}
